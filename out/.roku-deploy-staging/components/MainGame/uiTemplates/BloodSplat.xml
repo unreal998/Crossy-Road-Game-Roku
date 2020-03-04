@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="BloodSplat" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/BloodSplat.brs"/>
+    <interface>
+        <field id = "typeOfBlood" type="integer" />
+    </interface>
+</component>

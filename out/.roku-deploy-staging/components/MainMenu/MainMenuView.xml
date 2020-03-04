@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="MainMenuView" extends="Group">
+    <interface>
+        <field id = "selectedState" type="string"/>
+    </interface>
+    <children>
+        <LabelList id="MainMenuList">
+            <ContentNode role = "content">
+                <ContentNode title = "New Game" />
+                <ContentNode title = "Settings" />
+                <ContentNode title = "Exit" />
+            </ContentNode>
+        </LabelList>    
+    </children>
+    <script type="text/brightscript" uri="pkg:/components/MainMenu/MainMenuView.brs"/>
+</component>

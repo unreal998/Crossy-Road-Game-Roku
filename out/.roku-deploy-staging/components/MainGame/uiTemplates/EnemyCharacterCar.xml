@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="EnemyCharacterCar" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/EnemyCharacterCar.brs"/>
+    <interface>
+        <field id = "speed" type = "integer"/>
+    </interface>
+    <children>
+        <Poster id="carTexture"/>
+    </children>
+</component>
