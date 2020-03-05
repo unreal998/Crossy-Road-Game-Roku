@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <component name="MainGameView" extends="Group">
     <interface>
+        <field  id = "gameState" type="string" />
+        <function name="startNewGame" />
+        <function name="restartLevel" />
     </interface>
     <script type="text/brightscript" uri="pkg:/components/MainGame/MainGameView.brs"/>
+    <script type="text/brightscript" uri="pkg:/source/events/EventType.brs"/>
     <children>
         <LabelList id="MainGameContainer">
             <ContentNode role = "content">
@@ -10,7 +14,7 @@
             </ContentNode>
         </LabelList>
         <Timer
-            id="movementTimer"
+            id="engineTimer"
             repeat="true"
             duration="0.1"
         />    

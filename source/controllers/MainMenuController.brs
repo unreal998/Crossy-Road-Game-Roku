@@ -6,8 +6,9 @@ function GetMainMenuController()
         prototype.mainMenuMediator = GetMainMenuMediator()
         prototype.eventTypes = GetEventType()
 
-        prototype.init = function()
+        prototype.init = function(appContainer)
             m.mainMenuMediator.addEventListener(m.mainMenuMediator.CHANGE_APP_STATE, "_setChoosenState", m)
+            m.mainMenuMediator.createMainMenuView(appContainer)
         end function
 
         prototype._setChoosenState = function(choosenStateData)
@@ -22,13 +23,9 @@ function GetMainMenuController()
             end if
         end function
 
-        prototype.getMainMenuView = function()
-            if (m.mainMenuMediator.mainMenuView = invalid)
-                m.mainMenuMediator.createMainMenuView()
-            end if
-            return m.mainMenuMediator.mainMenuView
+        prototype.destroy = function()
+            m.mainMenuMediator.removeEventListener(m.mainMenuMediator.CHANGE_APP_STATE, "_setChoosenState", m)
         end function
-
         m._mainMenuController = prototype
     end if
 

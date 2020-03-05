@@ -1,6 +1,5 @@
 function init()
+    m.context = m.top
     m.appController = GetAppController()
-    m.appContainer = createObject("roSGNode", "AppContainer")
-    m.appController.initApp(m.appContainer)
-    m.top.appendChild(m.appContainer)
+    m.appController.initApp(m.context)
 end function

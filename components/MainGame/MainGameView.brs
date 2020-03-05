@@ -1,27 +1,45 @@
 function init()
     m.context = m.top
     m.mainGameContainer = m.context.findNode("MainGameContainer")
-    m.movementTimer = m.context.findNode("movementTimer")
+    m.engineTimer = m.context.findNode("engineTimer")
+    m.EVENT_TYPES = GetEventType()
     m.isPress = false
-    m.movementTimer.ObserveField("fire", "engineTimer")
+    m.engineTimer.ObserveField("fire", "engineTimer")
     m.mainGameContainer.setFocus(true)
+
     m.CHARACTERS_SIZE = 96
     m.ENEMY_SIZE = 120
-    m.PLAYER_SPEED = 40
-    m.ENEMYS_COUNT = 15
-    m.CHARACTER_START_POSITION = [830, 0]
-    startNewGame()
+    m.HEART_SIZE = 90
 end function
  
-function startNewGame()
+function _addGameContainers()
+    m.arenaContainer = createObject("roSGNode", "Group")
+    m.bloodSplatContainer = createObject("roSGNode", "Group")
+    m.enemysContainer = createObject("roSGNode", "Group")
+    m.context.appendChild(m.arenaContainer)
+    m.context.appendChild(m.bloodSplatContainer)
+    m.context.appendChild(m.enemysContainer)
+end function
+
+function startNewGame(mainGameStatData as Object)
+    _addGameContainers()
     buildArena()
-    createCharacter()
+    createCharacter(mainGameStatData.playerData)
+    createHealthBar(mainGameStatData.playerData)
+    m.enemysCount = mainGameStatData.gameProcessData.ENEMYS_COUNT
+    m.bloodSplatCount = mainGameStatData.gameProcessData.BLOOD_SPLAT_COUNT
     createEnemy()
-    m.movementTimer.control = "start"
+    m.engineTimer.control = "start"
+end function
+
+function createHealthBar(playerData)
+    m.healthBar = createObject("roSGNode", "HealthBar")
+    m.healthBar.healthCount = playerData.healthCount
+    m.healthBar.translation = [ (1920 - (m.HEART_SIZE * 3)) ,0]
+    m.context.appendChild(m.healthBar)
 end function
 
 function buildArena()
-    m.arenaContainer = createObject("roSGNode", "Group")
     for i = 0 to 7
         if (i = 0 or i = 7)
             row = createObject("roSGNode", "StartAndFinishRow")
@@ -31,26 +49,23 @@ function buildArena()
         row.translation = [0, 135 * i]
         m.arenaContainer.appendChild(row)
     end for
-    m.context.appendChild(m.arenaContainer)
     m.rowsCountWithouStartAndFinish = m.arenaContainer.getChildCount() - 2    
 end function
 
 function createEnemy()
-    m.enemysContainer = createObject("roSGNode", "Group")
-    for i = 0 to m.ENEMYS_COUNT
+    for i = 0 to m.enemysCount
         enemy = createObject("roSGNode", "EnemyCharacterCar")
         randomRow = m.arenaContainer.getChild(Rnd(m.rowsCountWithouStartAndFinish))
         enemy.speed = Rnd(30)
         enemy.translation = [-m.ENEMY_SIZE / 2, randomRow.translation[1]]
         m.enemysContainer.appendChild(enemy)
     end for 
-    m.context.appendChild(m.enemysContainer)
 end function
 
-function createCharacter()
+function createCharacter(playerData)
     m.character = createObject("roSGNode", "PlayerCharacter")
-    m.character.translation = m.CHARACTER_START_POSITION
-    m.character.speed = m.PLAYER_SPEED
+    m.character.translation = playerData.PLAYER_START_POSITION
+    m.character.speed = playerData.PLAYER_SPEED
     m.character.direction = "down"
     m.context.appendChild(m.character)
     m.character.setFocus(true)
@@ -58,8 +73,8 @@ end function
 
 function addEnemyCharacters()
     enemysContainerChildCount = m.enemysContainer.getChildCount() - 1
-    if (enemysContainerChildCount < m.ENEMYS_COUNT)
-        needAddEnemyValue = m.ENEMYS_COUNT - enemysContainerChildCount 
+    if (enemysContainerChildCount < m.enemysCount)
+        needAddEnemyValue = m.enemysCount - enemysContainerChildCount 
         for i = 0 to needAddEnemyValue
             enemy = createObject("roSGNode", "EnemyCharacterCar")
             randomRow = m.arenaContainer.getChild(Rnd(m.rowsCountWithouStartAndFinish))
@@ -87,15 +102,25 @@ function createBloodSplat(positionsArray)
     bloodSplat = createObject("roSGNode", "BloodSplat")
     bloodSplat.typeOfBlood = Rnd(4)
     bloodSplat.translation = positionsArray
-    m.arenaContainer.appendChild(bloodSplat)
+    if (m.bloodSplatContainer.getChildCount() > m.bloodSplatCount)
+        m.bloodSplatContainer.removeChildIndex(0)
+    end if
+    m.bloodSplatContainer.appendChild(bloodSplat)
 end function
 
 function playerDie()
     createBloodSplat(m.character.translation)
-    m.character.translation = m.CHARACTER_START_POSITION
+    m.context.gameState = m.EVENT_TYPES.WAS_SMASHED
 end function
 
-function checkCharactersPositions()
+function restartLevel(playerData)
+    m.character.translation = playerData.PLAYER_START_POSITION
+    m.healthBar.callFunc("removeHealth", {helthCount: playerData.healthCount})
+    m.enemysContainer.removeChildrenIndex(m.enemysContainer.getChildCount() - 1, 0)
+    createEnemy()
+end function
+
+function checkCharactersColision()
     characterMinXPosition = m.character.translation[0] - m.CHARACTERS_SIZE / 2
     characterMaxXPosition = m.character.translation[0] + m.CHARACTERS_SIZE / 2
     characterMinYPosition = m.character.translation[1] - m.CHARACTERS_SIZE / 2
@@ -123,7 +148,8 @@ function playerMovement()
             end if
             m.character.translation = [m.character.translation[0] + m.character.speed, m.character.translation[1]]
         else if (m.pressedKey = "down")
-            if (m.character.translation[1] > 980)
+            if (m.character.translation[1] > 920)
+                playerWin()
                 m.isPress = false
                 return true
             end if
@@ -145,13 +171,17 @@ function playerMovement()
     end if
 end function
 
+function playerWin()
+    m.context.gameState = m.EVENT_TYPES.PLAYER_WIN
+end function
+
 function engineTimer()
     playerMovement()
     for i = 0 to m.enemysContainer.getChildCount() - 1
         enemyCharacter = m.enemysContainer.getChild(i)
         enemyCharacter.translation = [enemyCharacter.translation[0] + enemyCharacter.speed, enemyCharacter.translation[1]]
     end for
-    checkCharactersPositions()
+    checkCharactersColision()
     checkEnemyPosition()
     addEnemyCharacters()
 end function

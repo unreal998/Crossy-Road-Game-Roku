@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="DialogsView" extends="Group">
+    <interface>
+        <field id = "dialogType" type="string"/>
+        <field id = "selectedState" type="string"/>
+    </interface>
+    <children>
+        <LayoutGroup layoutDirection="vert">
+            <Label id="DialogTitle"/>
+            <LabelList id="DialogList">
+                <ContentNode role = "content">
+                    <ContentNode id = "Restart" title = "Restart" />
+                    <ContentNode id = "Exit" title = "Exit to Main Menu" />
+                </ContentNode>
+            </LabelList>
+        </LayoutGroup>        
+    </children>
+
+    <script type="text/brightscript" uri="pkg:/components/Dialogs/DialogsView.brs"/>
+    <script type="text/brightscript" uri="pkg:/source/events/EventType.brs"/>
+</component>

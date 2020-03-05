@@ -10,9 +10,14 @@
   <script type="text/brightscript" uri="pkg:/source/controllers/AppController.brs"/>
   <script type="text/brightscript" uri="pkg:/source/controllers/MainGameController.brs"/>
   <script type="text/brightscript" uri="pkg:/source/controllers/MainMenuController.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/controllers/MainDialogController.brs"/>
+  
 
   <script type="text/brightscript" uri="pkg:/source/mediators/MainGameMediator.brs"/>
   <script type="text/brightscript" uri="pkg:/source/mediators/MainMenuMediator.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/mediators/MainDialogMediator.brs"/>
+
+  <script type="text/brightscript" uri="pkg:/source/models/MainGameModel.brs"/>
 
   <script type="text/brightscript" uri="pkg:/source/events/EventDispatcher.brs"/>
   <script type="text/brightscript" uri="pkg:/source/events/EventType.brs"/>

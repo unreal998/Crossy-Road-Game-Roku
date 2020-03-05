@@ -2,30 +2,23 @@ function init()
     m.context = m.top
     m.TILE_WIDTH_SIZE = 90
     m.TILE_HEIGHT_SIZE = 90
-    m.context.observeField("typeOfBlood", "createTilesLine")
+    m.context.observeField("healthCount", "createHealthBar")
 end function
 
-function getypeOfBlood()
-    pathToFIle = ""
-    if ( m.context.typeOfBlood = 1 )
-        pathToFIle = "pkg:/images/blood/bloodSplat1.png"
-    else if(m.context.typeOfBlood = 2)
-        pathToFIle = "pkg:/images/blood/bloodSplat2.png"
-    else if(m.context.typeOfBlood = 3)
-        pathToFIle = "pkg:/images/blood/bloodSplat3.png"
-    else if(m.context.typeOfBlood = 4)
-        pathToFIle = "pkg:/images/blood/bloodSplat4.png"
-    end if
-    return pathToFIle
+function removeHealth(helthData)
+    helthItem = m.healthBarContainer.getChild(helthData.helthCount)
+    helthItem.uri = "pkg:/images/health/HeartBlack.png"
 end function
 
-function createHealthBar(healthCount)
+function createHealthBar()
     m.healthBarContainer = createObject("roSGNode", "Group")
-    for i = 0 to healthCount 
+    for i = 0 to m.context.healthCount - 1
         heart = createObject("roSGNode", "Poster")
-        tile.uri = "pkg:/images/health/Heart.png"
-        tile.width = m.TILE_WIDTH_SIZE
-        tile.height = m.TILE_HEIGHT_SIZE
-        m.context.appendChild(tile)
-    end for    
+        heart.uri = "pkg:/images/health/Heart.png"
+        heart.width = m.TILE_WIDTH_SIZE
+        heart.height = m.TILE_HEIGHT_SIZE
+        heart.translation = [m.TILE_WIDTH_SIZE * i, 0]
+        m.healthBarContainer.appendChild(heart)
+    end for
+    m.context.appendChild(m.healthBarContainer)    
 end function

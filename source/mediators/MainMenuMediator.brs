@@ -5,9 +5,10 @@ function GetMainMenuMediator()
 
         prototype.CHANGE_APP_STATE = "MainMenuMediator.CHANGE_APP_STATE"
 
-        prototype.createMainMenuView = function()
+        prototype.createMainMenuView = function(appContainer)
             m.mainMenuView = createObject("roSGNode", "MainMenuView")
             m.mainMenuView.observeField("selectedState", "changeAppState")
+            appContainer.appendChild(m.mainMenuView)
             m.mainMenuView.setFocus(true)
         end function
         

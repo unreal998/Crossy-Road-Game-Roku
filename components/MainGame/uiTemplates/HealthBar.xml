@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <component name="HealthBar" extends="Group">
-    <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/BloodSplat.brs"/>
+    <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/HealthBar.brs"/>
     <interface>
+        <field id = "healthCount" type = "integer" />
+        <function name = "removeHealth" />
     </interface>
 </component>
