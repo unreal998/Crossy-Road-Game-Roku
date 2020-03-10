@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SettingsContentModel" extends="ContentNode">
+    <interface>
+        <field id = "settingValue" type="string"/>
+    </interface>
+</component>

@@ -3,6 +3,7 @@
     <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/EnemyCharacterCar.brs"/>
     <interface>
         <field id = "speed" type = "integer"/>
+        <field id = "direction" type = "string"/>
     </interface>
     <children>
         <Poster id="carTexture"/>

@@ -23,12 +23,45 @@ function GetMainGameModel()
         end function
 
         prototype.setPlayerData = function()
+            m.setRandomMode()
             m.playerData = {
+                gameMode: m.gameMode
                 healthCount: m._healthCount,
-                PLAYER_SPEED: m._playerSpeed,
-                PLAYER_START_POSITION: [830, 0]
+                playerSpeed: m._playerSpeed,
+                playerStartPosition: m._setPlayerStartPosition(),
+                tilesCount: m._setTilesCount()
             }
+        end function
+
+        prototype._setTilesCount = function()
+            tilesCount = 0
+            if (m.gameMode = "vert")
+                tilesCount = 9
+            else if(m.gameMode = "horiz")
+                tilesCount = 7
+            end if
+            return tilesCount
         end function    
+        
+        prototype._setPlayerStartPosition = function()
+            startPosition = []
+            if (m.gameMode = "vert")
+                startPosition= [0, 400]
+            else if(m.gameMode = "horiz")
+                startPosition= [800, 0]
+            end if
+            return startPosition
+        end function
+
+        prototype.setRandomMode = function()
+            m.gameMode = ""
+            randomValue = Rnd(2)
+            if (randomValue = 1)
+                m.gameMode = "vert"
+            else 
+                m.gameMode = "horiz"
+            end if
+        end function
 
         prototype.setHelthCount = function(helthCount)
             m._healthCount = healthCount

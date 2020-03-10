@@ -7,7 +7,7 @@ function GetSettingsController()
         prototype.eventTypes = GetEventType()
 
         prototype.init = function(appContainer)
-            m.settingsMediator.addEventListener(m.settingsMediator.CHANGE_SETTINGS_STATE, "_setChoosenSettingsState", m)
+            m.settingsMediator.addEventListener(m.eventTypes.CHANGE_SETTINGS_STATE, "_setChoosenSettingsState", m)
             m.settingsMediator.createSettingsView(appContainer)
         end function
 
@@ -22,7 +22,7 @@ function GetSettingsController()
         end function
 
         prototype.destroy = function()
-            m.settingsMediator.removeEventListener(m.settingsMediator.CHANGE_SETTINGS_STATE, "_setChoosenState", m)
+            m.settingsMediator.removeEventListener(m.eventTypes.CHANGE_SETTINGS_STATE, "_setChoosenState", m)
         end function
         m._settingsController = prototype
     end if

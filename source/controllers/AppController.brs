@@ -5,6 +5,7 @@ function GetAppController()
 
         prototype.mainMenuController = GetMainMenuController() 
         prototype.mainGameController = GetMainGameController()
+        prototype.settingsController = GetSettingsController()
         prototype.mainDialogController = GetMainDialogController()
 
         prototype.eventTypes = GetEventType()
@@ -38,7 +39,10 @@ function GetAppController()
         end function
 
         prototype._showSettings = function()
-            ' m.mainMenuController.destroy()
+            m._clearAppState("menu")
+            m.mainMenuController.destroy()
+
+            m.settingsController.init(m.appContainer)
         end function
 
         prototype._exit = function()

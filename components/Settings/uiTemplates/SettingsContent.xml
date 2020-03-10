@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SettingsContent" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/Settings/uiTemplates/SettingsContent.brs"/>
+    <interface> 
+        <field id="itemContent" type="node" onChange="itemContentChanged"/>
+    </interface>
+    <children>
+        <Label id = "settingValues" />
+    </children>
+</component>

@@ -10,6 +10,8 @@ function init()
     m.CHARACTERS_SIZE = 96
     m.ENEMY_SIZE = 120
     m.HEART_SIZE = 90
+    m.TILE_HEIGHT_SIZE = 135
+    m.TILE_WIDHT_SIZE = 192
 end function
  
 function _addGameContainers()
@@ -23,12 +25,13 @@ end function
 
 function startNewGame(mainGameStatData as Object)
     _addGameContainers()
-    buildArena()
+    m.gameMode = mainGameStatData.playerData.gameMode
+    buildArena(mainGameStatData.playerData)
     createCharacter(mainGameStatData.playerData)
     createHealthBar(mainGameStatData.playerData)
     m.enemysCount = mainGameStatData.gameProcessData.ENEMYS_COUNT
     m.bloodSplatCount = mainGameStatData.gameProcessData.BLOOD_SPLAT_COUNT
-    createEnemy()
+    createEnemy(mainGameStatData.playerData.gameMode)
     m.engineTimer.control = "start"
 end function
 
@@ -39,33 +42,43 @@ function createHealthBar(playerData)
     m.context.appendChild(m.healthBar)
 end function
 
-function buildArena()
-    for i = 0 to 7
-        if (i = 0 or i = 7)
+function buildArena(playerData)
+    for i = 0 to playerData.tilesCount
+        if (i = 0 or i = playerData.tilesCount)
             row = createObject("roSGNode", "StartAndFinishRow")
         else
             row = createObject("roSGNode", "AsphaltRow")
         end if
-        row.translation = [0, 135 * i]
+        row.mode = playerData.gameMode
+        if (playerData.gameMode = "vert")
+            row.translation = [m.TILE_WIDHT_SIZE * i, 0]
+        else if (playerData.gameMode = "horiz")
+            row.translation = [0, m.TILE_HEIGHT_SIZE * i]
+        end if 
         m.arenaContainer.appendChild(row)
     end for
     m.rowsCountWithouStartAndFinish = m.arenaContainer.getChildCount() - 2    
 end function
 
-function createEnemy()
+function createEnemy(gameMode)
     for i = 0 to m.enemysCount
         enemy = createObject("roSGNode", "EnemyCharacterCar")
         randomRow = m.arenaContainer.getChild(Rnd(m.rowsCountWithouStartAndFinish))
         enemy.speed = Rnd(30)
-        enemy.translation = [-m.ENEMY_SIZE / 2, randomRow.translation[1]]
-        m.enemysContainer.appendChild(enemy)
+        if (gameMode = "vert")    
+            enemy.translation = [randomRow.translation[0] + m.ENEMY_SIZE / 4, -m.ENEMY_SIZE]
+        else if (gameMode = "horiz")
+            enemy.translation = [-m.ENEMY_SIZE / 2, randomRow.translation[1]]
+        end if
+        enemy.direction = gameMode
+        m.enemysContainer.appendChild(enemy)    
     end for 
 end function
 
 function createCharacter(playerData)
     m.character = createObject("roSGNode", "PlayerCharacter")
-    m.character.translation = playerData.PLAYER_START_POSITION
-    m.character.speed = playerData.PLAYER_SPEED
+    m.character.translation = playerData.playerStartPosition
+    m.character.speed = playerData.playerSpeed
     m.character.direction = "down"
     m.context.appendChild(m.character)
     m.character.setFocus(true)
@@ -79,7 +92,12 @@ function addEnemyCharacters()
             enemy = createObject("roSGNode", "EnemyCharacterCar")
             randomRow = m.arenaContainer.getChild(Rnd(m.rowsCountWithouStartAndFinish))
             enemy.speed = Rnd(30)
-            enemy.translation = [-m.ENEMY_SIZE / 2, randomRow.translation[1]]
+            if (m.gameMode = "vert")    
+                enemy.translation = [randomRow.translation[0] + m.ENEMY_SIZE / 4, -m.ENEMY_SIZE]
+            else if (m.gameMode = "horiz")
+                enemy.translation = [-m.ENEMY_SIZE / 2, randomRow.translation[1]]
+            end if
+            enemy.direction = m.gameMode
             m.enemysContainer.appendChild(enemy)
         end for 
     end if
@@ -89,7 +107,7 @@ function checkEnemyPosition()
     enemysToRemveArray = []
     for i = 0 to m.enemysContainer.getChildCount() - 1
         enemyCharacter = m.enemysContainer.getChild(i)
-        if (enemyCharacter.translation[0] > 1920)
+        if (enemyCharacter.translation[0] > 1920 or enemyCharacter.translation[1] > 1080)
             enemysToRemveArray.push(i)
         end if
     end for
@@ -114,17 +132,17 @@ function playerDie()
 end function
 
 function restartLevel(playerData)
-    m.character.translation = playerData.PLAYER_START_POSITION
+    m.character.translation = playerData.playerStartPosition
     m.healthBar.callFunc("removeHealth", {helthCount: playerData.healthCount})
     m.enemysContainer.removeChildrenIndex(m.enemysContainer.getChildCount() - 1, 0)
-    createEnemy()
+    createEnemy(playerData.gameMode)
 end function
 
 function checkCharactersColision()
-    characterMinXPosition = m.character.translation[0] - m.CHARACTERS_SIZE / 2
-    characterMaxXPosition = m.character.translation[0] + m.CHARACTERS_SIZE / 2
-    characterMinYPosition = m.character.translation[1] - m.CHARACTERS_SIZE / 2
-    characterMaxYPosition = m.character.translation[1] + m.CHARACTERS_SIZE / 2
+    characterMinXPosition = (m.character.translation[0] - m.CHARACTERS_SIZE / 2) - 15
+    characterMaxXPosition = (m.character.translation[0] + m.CHARACTERS_SIZE / 2) - 15
+    characterMinYPosition = (m.character.translation[1] - m.CHARACTERS_SIZE / 2) - 15
+    characterMaxYPosition = (m.character.translation[1] + m.CHARACTERS_SIZE / 2) - 15
     for i = 0 to m.enemysContainer.getChildCount() - 1
         enemy = m.enemysContainer.getChild(i)
         enemyMinXPosition = enemy.translation[0] - m.ENEMY_SIZE / 2
@@ -142,14 +160,19 @@ end function
 function playerMovement()
     if (m.isPress)
         if (m.pressedKey = "right")
-            if (m.character.translation[0] > 1800)
+            if (m.character.translation[0] > 1750)
+                if (m.gameMode = "vert")
+                    playerWin()
+                end if
                 m.isPress = false
                 return true
             end if
             m.character.translation = [m.character.translation[0] + m.character.speed, m.character.translation[1]]
         else if (m.pressedKey = "down")
             if (m.character.translation[1] > 920)
-                playerWin()
+                if (m.gameMode = "horiz")
+                    playerWin()
+                end if
                 m.isPress = false
                 return true
             end if
@@ -175,12 +198,27 @@ function playerWin()
     m.context.gameState = m.EVENT_TYPES.PLAYER_WIN
 end function
 
-function engineTimer()
-    playerMovement()
+function enemyCharactersMovementHorizontal()
     for i = 0 to m.enemysContainer.getChildCount() - 1
         enemyCharacter = m.enemysContainer.getChild(i)
         enemyCharacter.translation = [enemyCharacter.translation[0] + enemyCharacter.speed, enemyCharacter.translation[1]]
     end for
+end function
+
+function enemyCharactersMovementVertical()
+    for i = 0 to m.enemysContainer.getChildCount() - 1
+        enemyCharacter = m.enemysContainer.getChild(i)
+        enemyCharacter.translation = [enemyCharacter.translation[0], enemyCharacter.translation[1] + enemyCharacter.speed]
+    end for
+end function
+
+function engineTimer()
+    playerMovement()
+    if (m.gameMode = "horiz")
+        enemyCharactersMovementHorizontal()
+    else if (m.gameMode = "vert")
+        enemyCharactersMovementVertical()
+    end if
     checkCharactersColision()
     checkEnemyPosition()
     addEnemyCharacters()

@@ -4,14 +4,7 @@
         <field id = "selectedState" type="string"/>
     </interface>
     <children>
-        <LabelList id="SettingsList">
-            <ContentNode role = "content">
-                <ContentNode title = "Player Speed" />
-                <ContentNode title = "Lifes count" />
-                <ContentNode title = "Save" />
-                <ContentNode title = "Back" />
-            </ContentNode>
-        </LabelList>    
+        <RowList id="SettingsList" itemComponentName = "SettingsContent"></RowList>    
     </children>
     <script type="text/brightscript" uri="pkg:/components/Settings/SettingsView.brs"/>
 </component>

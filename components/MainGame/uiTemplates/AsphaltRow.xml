@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <component name="AsphaltRow" extends="LayoutGroup">
     <script type="text/brightscript" uri="pkg:/components/MainGame/uiTemplates/AsphaltRow.brs"/>
+    <interface>
+        <field id = "mode" type = "string"/>
+    </interface>
 </component>
